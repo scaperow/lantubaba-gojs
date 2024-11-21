@@ -1,0 +1,9 @@
+// @use "vuetify/settings" with (
+//   $menu-elevation: 0
+// );
+
+// $menu-elevation: 0;
+
+@forward "vuetify/settings" with (
+  $menu-elevation: 0 !default
+);
