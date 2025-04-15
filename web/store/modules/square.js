@@ -15,15 +15,15 @@ const getters = {
 
 const actions = {
     async getList({ state, commit }, { index = 1, size = 20, keywords } = {}) {
-        // var { results, count } = await Parse.Cloud.run('square', {
-        //     index,
-        //     size,
-        //     keywords
-        // })
+        var { results, count } = await Parse.Cloud.run('square', {
+            index,
+            size,
+            keywords
+        })
 
-        // var list = [...state.list, ...results]
-        // commit('SET_LIST', list)
-        // commit('SET_COUNT', count)
+        var list = [...state.list, ...results]
+        commit('SET_LIST', list)
+        commit('SET_COUNT', count)
     },
     async clear({ state, commit }) {
         commit('SET_LIST', [])

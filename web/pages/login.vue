@@ -1,139 +1,107 @@
-<template>
-  <div
-    class="
-      d-flex
-      flex-column
-      justify-space-between
-      align-stretch
-      flex-grow-1
-      blue-grey
-      lighten-5
-    "
-  >
-    <hair only-logo="true" :dark="false" />
+<template >
+  <div class="primary d-flex flex-column justify-space-between align-stretch flex-grow-1">
+    <hair :only-logo="true" />
     <div class="d-flex flex-grow-1 flex-column justify-center align-center">
-      <v-card min-width="520" class="pa-12 pt-2" outlined>
-        <v-tabs centered icons-and-text v-model="step">
-          <v-tab :disabled="isSigining || isSiguping" key="SIGIN">登录</v-tab>
-          <v-tab :disabled="isSigining || isSiguping" key="SIGUP">注册</v-tab>
-        </v-tabs>
-        <v-tabs-items v-model="step">
-          <v-tab-item key="SIGIN">
-            <v-form @submit.prevent.stop="sigin">
-              <v-card-text class="mt-8">
-                <v-alert dark color="error" v-show="siginMessage">{{
-                  siginMessage
-                }}</v-alert>
-
+      <v-card min-width="520" class="pa-12 pt-6" style="border-radius:16px">
+        <v-card-title class="d-flex flex-row justify-center">
+          <v-btn-toggle rounded v-model="step" color="primary" group>
+            <v-btn text value="SIGIN">登录</v-btn>
+            <v-btn text value="SIGUP">注册</v-btn>
+          </v-btn-toggle>
+        </v-card-title>
+        <form class="mt-6" @submit.prevent="submit">
+          <v-card-text v-show="step === 'SIGIN'">
+            <v-alert dark color="error" v-show="siginMessage">{{siginMessage}}</v-alert>
+            <div>
+              <div>
                 <v-text-field
                   filled
                   v-model="siginForm.username"
                   label="用户名/邮箱"
                   :rules="[$validate('isNotEmpty')]"
                 ></v-text-field>
+              </div>
+              <div>
                 <v-text-field
                   filled
                   type="password"
                   v-model="siginForm.password"
                   label="密码"
-                  :rules="[
-                    $validate('isNotEmpty'),
-                    $validate('isPassword'),
-                    $validate('isLength', { min: 6, max: 24 }),
-                  ]"
+                  :rules="[$validate('isNotEmpty'),$validate('isPassword'),$validate('isLength',{min:6,max:24})]"
                 ></v-text-field>
-              </v-card-text>
-              <v-card-actions class="d-flex flex-column">
-                <v-btn text nuxt depressed target="_blank" to="/reset"
-                  >忘记密码 ?</v-btn
-                >
-                <v-btn
-                  block
-                  type="submit"
-                  color="primary"
-                  depressed
-                  :loading="isSigining"
-                  >登录</v-btn
-                >
-              </v-card-actions>
-            </v-form>
-          </v-tab-item>
-          <v-tab-item key="SIGUP">
-            <v-form @submit.prevent.stop="sigup">
-              <v-card-text class="mt-8">
-                <v-alert dark color="error" v-show="sigupMessage">
-                  {{ sigupMessage }}
-                  <span v-show="isRedirectSigin">
-                    或者使用该用户
-                    <v-btn outlined rounded @click="step = 'SIGIN'">登录</v-btn>
-                  </span>
-                </v-alert>
-                <v-form>
-                  <v-text-field
-                    filled
-                    label="用户名"
-                    v-model="sigupForm.username"
-                    :rules="[
-                      $validate('isNotEmpty'),
-                      $validate('isAlphanumeric'),
-                      $validate('isLength', { min: 3, max: 24 }),
-                    ]"
-                  ></v-text-field>
-                  <v-text-field
-                    filled
-                    type="email"
-                    label="邮箱"
-                    :rules="[$validate('isNotEmpty'), $validate('isEmail')]"
-                    v-model="sigupForm.email"
-                    class="forms_field-input"
-                  ></v-text-field>
-                  <v-text-field
-                    filled
-                    type="password"
-                    :rules="[
-                      $validate('isNotEmpty'),
-                      $validate('isPassword'),
-                      $validate('isLength', { min: 6, max: 24 }),
-                    ]"
-                    v-model="sigupForm.password"
-                    label="密码"
-                  ></v-text-field>
-                </v-form>
-              </v-card-text>
-              <v-card-actions class="d-flex flex-column">
-                <v-btn text nuxt to="/">
-                  <v-icon>mdi-arrow-left</v-icon>回到首页
-                </v-btn>
-                <v-btn
-                  block
-                  type="submit"
-                  color="primary"
-                  depressed
-                  :loading="isSiguping"
-                  >注册</v-btn
-                >
-              </v-card-actions>
-            </v-form>
-          </v-tab-item>
-        </v-tabs-items>
+              </div>
+            </div>
+          </v-card-text>
+          <v-card-text class="pt-20" v-show="step === 'SIGUP'">
+            <v-alert dark color="error" v-show="sigupMessage">
+              {{sigupMessage}}
+              <span v-show="isRedirectSigin">
+                或者使用该用户
+                <v-btn outlined rounded @click="step = 'SIGIN'">登录</v-btn>
+              </span>
+            </v-alert>
+            <div class="forms_fieldset">
+              <div class="forms_field">
+                <v-text-field
+                  filled
+                  label="用户名"
+                  v-model="sigupForm.username"
+                  :rules="[$validate('isNotEmpty'),$validate('isAlphanumeric'),$validate('isLength',{min:3,max:24})]"
+                ></v-text-field>
+              </div>
+              <div class="forms_field">
+                <v-text-field
+                  filled
+                  type="email"
+                  label="邮箱"
+                  :rules="[$validate('isNotEmpty'),$validate('isEmail')]"
+                  v-model="sigupForm.email"
+                  class="forms_field-input"
+                ></v-text-field>
+              </div>
+              <div class="forms_field">
+                <v-text-field
+                  filled
+                  type="password"
+                  :rules="[$validate('isNotEmpty'),$validate('isPassword'),$validate('isLength',{min:6,max:24})]"
+                  v-model="sigupForm.password"
+                  label="密码"
+                ></v-text-field>
+              </div>
+            </div>
+          </v-card-text>
+          <v-card-actions class="d-flex flex-row justify-space-between">
+            <div>
+              <v-btn text nuxt to="/">
+                <v-icon>mdi-arrow-left</v-icon>回到首页
+              </v-btn>
+            </div>
+            <div v-show="step === 'SIGIN'">
+              <v-btn text nuxt depressed target="_blank" to="/reset">忘记密码 ?</v-btn>
+              <v-btn rounded type="submit" color="secondary" depressed :loading="sigining">登录</v-btn>
+            </div>
+            <div v-show="step === 'SIGUP'">
+              <v-btn rounded type="submit" color="secondary" depressed :loading="siguping">注册</v-btn>
+            </div>
+          </v-card-actions>
+        </form>
       </v-card>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex";
-import axios from "axios";
+import Parse from "parse";
+import { mapActions, mapGetters } from "vuex";
 import Hair from "../components/Hair";
 
-const http = axios.create();
 export default {
   name: "LoginForm",
   template: "#login-form",
   data() {
     return {
-      isSigining: false,
-      isSiguping: false,
+      sigining: false,
+      siguping: false,
       text: "",
       isRedirectSigin: false,
       siginMessage: null,
@@ -142,103 +110,96 @@ export default {
       step: "SIGIN",
       siginForm: {
         username: "",
-        password: "",
+        password: ""
       },
       sigupForm: {
         username: "",
         email: "",
         password: "",
-        retryPassword: "",
-      },
+        retryPassword: ""
+      }
     };
   },
   components: {
-    Hair,
+    Hair
   },
   async created() {
     if (this.user) {
       return this.$router.push({ path: "/desktop" });
     }
+    // const user = await Parse.User.currentAsync()
+    // if (user) {
+    //   this.$store.dispatch('user/setUser', user.toJSON())
+    // }
   },
   computed: {
     redirectPath() {
       return this.$route.query.redirect || "/desktop";
     },
-    ...mapGetters({ user: "user/user" }),
+    ...mapGetters({ user: "user/user" })
   },
   methods: {
-    ...mapMutations({ setUser: "user/SET_USER" }),
     async sigin() {
+      let user = null;
       this.siginMessage = null;
-      this.isSigining = true;
+      this.sigining = true;
 
       try {
-        const { data: user } = await http.post("/users/sigin", {
-          name: this.siginForm.username,
-          password: this.siginForm.password,
-          siginAs: "mail",
-        });
-
-        if (!user) {
-          throw new Error({ code: 404 });
-        }
-
-        this.setUser(user);
-        if (this.redirectPath === "back") {
-          this.$router.go(-1);
-        } else {
-          this.$router.push(this.redirectPath);
-        }
+        user = await Parse.User.logIn(
+          this.siginForm.username,
+          this.siginForm.password
+        );
       } catch (error) {
-        var { code } = error;
+        var { code, message } = error;
         switch (code) {
-          case 404:
+          case Parse.Error.OBJECT_NOT_FOUND:
             this.siginMessage = "用户名或密码错误";
             break;
 
           default:
-            this.$catch(error, null, (message) => {
+            this.$catch(error, null, message => {
               this.siginMessage = message;
             });
             break;
         }
       } finally {
-        this.isSigining = false;
+        this.sigining = false;
       }
 
-      // if (user) {
-      // this.isVisible = false;
-      // this.siginForm = {
-      //   username: "",
-      //   password: ""
-      // };
-      // var role = await new Parse.Query(Parse.Role)
-      //   .equalTo("users", Parse.User.current())
-      //   .includeAll("*")
-      //   .find();
-      // this.$store.dispatch("user/setUser", user);
-      // if (this.redirectPath === "back") {
-      //   this.$router.go(-1);
-      // } else {
-      //   this.$router.push(this.redirectPath);
-      // }
-      // }
+      if (user) {
+        // this.isVisible = false;
+        // this.siginForm = {
+        //   username: "",
+        //   password: ""
+        // };
+        var role = await new Parse.Query(Parse.Role)
+          .equalTo("users", Parse.User.current())
+          .includeAll("*")
+          .find();
+
+        this.$store.dispatch("user/setUser", user);
+        if (this.redirectPath === "back") {
+          this.$router.go(-1);
+        } else {
+          this.$router.push(this.redirectPath);
+        }
+      }
     },
     async logout() {
-      // try {
-      //   await Parse.User.logOut();
-      //   // this.isVisible = true;
-      //   this.$store.dispatch("user/setUser", null);
-      // } catch (error) {
-      //   this.$catch(error);
-      // }
+      try {
+        await Parse.User.logOut();
+        // this.isVisible = true;
+        this.$store.dispatch("user/setUser", null);
+      } catch (error) {
+        this.$catch(error);
+      }
     },
     async validateEmail() {},
     async sigup() {
       try {
-        // await Parse.User.logOut();
+        await Parse.User.logOut();
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
 
       let isSuccess = false;
@@ -267,8 +228,8 @@ export default {
             break;
 
           default:
-            this.sigupMessage = "未知错误, 请重试";
-            console.error(error);
+            this.sigupMessage='未知错误, 请重试'
+            console.error(error)
         }
       } finally {
         this.siguping = false;
@@ -287,10 +248,18 @@ export default {
           username: "",
           email: "",
           password: "",
-          retryPassword: "",
+          retryPassword: ""
         };
       }
     },
-  },
+    submit() {
+      if (this.step === "SIGUP") {
+        this.sigup();
+      } else {
+        this.sigin();
+      }
+    }
+  }
 };
 </script>
+

@@ -261,7 +261,7 @@
  */
 import _ from "lodash";
 import { mapGetters } from "vuex";
-// import Pixel from "unit-to-px";
+import Pixel from "unit-to-px";
 import ColorPicker from "../components/ColorPicker";
 import StylePalatte from "../components/StylePalatte";
 

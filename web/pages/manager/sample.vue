@@ -58,6 +58,7 @@
   </v-container>
 </template>
 <script>
+import Parse from "parse";
 import _ from "lodash";
 import systemSetting from "~/store/predefine/setting";
 import { Maps, MindMap, SequenceMap, FlowChart } from "../../map";

@@ -1,13 +1,25 @@
 <template>
   <section class="file-list d-flex flex-column flex-grow-1">
-    <div class="d-flex flex-row flex-grow-1 flex-wrap justify-center justify-md-start align-content-start"
-      v-if="maps && maps.length > 0">
-      <div v-for="(map, index) in maps" :key="index" class="animated fadeIn">
-        <slot name="card" v-bind="{ model: map, index: index }">
-          <document-item :model="map" @check="check(map)" @open="open(map.id, index)" @rename="rename(map, index)"
-            @remove="remove(map, index)" @share="share(map.objectId)" @remove_forever="removeForever(map, index)"
-            @recovery="recovery(map)" @move_to="moveTo(map)" @copy_to="copyTo(map)" @copy="copyTo(map, true)"
-            @change_accessibility="changeAccessibility(map)" />
+    <div
+      class="d-flex flex-row flex-grow-1 flex-wrap justify-center justify-md-start align-content-start"
+      v-if="list && list.length > 0"
+    >
+      <div v-for="(workItem,index) in list" :key="index" class="animated fadeIn">
+        <slot name="card" v-bind="{model:workItem, index:index}">
+          <component
+            :is="workItem.isFolder ? 'folder-item':'document-item'"
+            :model="workItem"
+            @open="open(workItem.objectId,index)"
+            @rename="rename(workItem,index)"
+            @remove="remove(workItem,index)"
+            @share="share(workItem.objectId)"
+            @remove_forever="removeForever(workItem,index)"
+            @recovery="recovery(workItem)"
+            @move_to="moveTo(workItem)"
+            @copy_to="copyTo(workItem)"
+            @copy="copyTo(workItem,true)"
+            @change_accessibility="changeAccessibility(workItem)"
+          />
         </slot>
       </div>
     </div>
@@ -33,17 +45,26 @@ import { mapGetters } from "vuex";
 import ShareModal from "./Share";
 import CreateModal from "./FileCreator";
 import DocumentItem from "./Document";
+import FolderItem from "./FoldCard";
 import FolderSelect from "./FolderSelect";
-import { last, isEmpty, map, first } from "lodash";
+import _ from "lodash";
 
 export default {
   props: {
+    showBreadcrumbs: {
+      type: Boolean,
+      default: true
+    },
+    allowCreateFolder: {
+      type: Boolean,
+      default: true
+    },
     rootName: String
   },
   computed: {
     ...mapGetters({
       user: "user/user",
-      maps: "works/maps",
+      list: "works/list",
       summary: "system/summary"
     })
   },
@@ -51,37 +72,28 @@ export default {
     ShareModal,
     CreateModal,
     DocumentItem,
+    FolderItem,
     FolderSelect
   },
   data() {
     return {
+      folderName: "新建文件夹",
       isSavingPassword: false,
       pageIndex: 0,
       pageSize: 10,
       worksTotal: 0,
       loading: false,
       isCreating: false,
-      isSharing: false,
-      checkIds: []
+      isSharing: false
     };
   },
   watch: {},
   methods: {
     getCurrentFolder() {
-      return last(this.folderPath);
+      return _.last(this.folderPath);
     },
     open(id) {
-      this.$router.push("/editor?id=" + id);
-    },
-    check(workItem) {
-      workItem.checked = !workItem.checked;
-      // if (this.checkIds.includes(id)) {
-      //   this.checkIds = pull(this.checkIds, id);
-      // } else {
-      //   this.checkIds.push(id);
-      // }
-
-
+      this.$router.push("/map?id=" + id);
     },
     async changeAccessibility(file) {
       try {
@@ -102,11 +114,11 @@ export default {
         folders = null;
       }
 
-      if (!isEmpty(folders)) {
+      if (!_.isEmpty(folders)) {
         try {
           this.$store.dispatch("works/copy", {
             fileId: file.objectId,
-            folderIds: map(folders, folder => folder && folder.objectId)
+            folderIds: _.map(folders, folder => folder && folder.objectId)
           });
         } catch (error) {
           this.$catch(error);
@@ -119,12 +131,12 @@ export default {
 
       try {
         folders = await this.$refs.folderSelect.open();
-        folder = first(folders);
+        folder = _.first(folders);
       } catch (error) {
         folders = null;
       }
 
-      if (!isEmpty(folder)) {
+      if (!_.isEmpty(folder)) {
         try {
           this.$store.dispatch("works/move", {
             fileId: workItem.objectId,
@@ -203,7 +215,7 @@ export default {
         this.loading = true;
 
         try {
-          await this.$store.dispatch("works/remove", [model.id]);
+          await this.$store.dispatch("works/remove", model.objectId);
         } catch (error) {
           this.$catch(error);
         } finally {
@@ -249,14 +261,12 @@ export default {
 section.file-list {
   .v-card {
     margin-right: 12px;
-
     .v-image {
       transition: all 0.3s;
       cursor: pointer;
 
       &.document {
         background: #42a5f5;
-
         &:hover {
           transform: scale(1.2, 1.2);
         }

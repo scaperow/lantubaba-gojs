@@ -19,6 +19,7 @@
   </v-toolbar>
 </template>
 <script>
+import Parse from "parse";
 import UserAvatar from "../components/UserAvatar";
 import { mapGetters } from "vuex";
 

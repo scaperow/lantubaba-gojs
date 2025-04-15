@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="isVisible" max-width="480">
     <v-card>
-      <v-card-title>{{ title }}</v-card-title>
+      <v-card-title>{{title}}</v-card-title>
       <v-card-text>
         <v-text-field
           height="20"
@@ -16,7 +16,7 @@
         ></v-text-field>
         <div class="ma-0 pa-2">
           <v-treeview
-            style="min-height: 480px"
+            style="min-height:480px"
             hoverable
             activatable
             item-key="objectId"
@@ -28,10 +28,8 @@
             return-object
             :items="treeData"
           >
-            <template v-slot:prepend="{ item, open, selected }">
-              <v-icon color="#FFEB3B">{{
-                open ? "mdi-folder-open" : "mdi-folder"
-              }}</v-icon>
+            <template v-slot:prepend="{ item, open,selected }">
+              <v-icon color="#FFEB3B">{{ open ? 'mdi-folder-open' : 'mdi-folder' }}</v-icon>
             </template>
           </v-treeview>
         </div>
@@ -46,20 +44,25 @@
 
 <script>
 import _ from "lodash";
+import Parse from "parse";
+import Http from "~/api/common";
 import { mapGetters, mapState } from "vuex";
 import NanoId from "nanoid";
 import ShareModal from "./Share";
-import axios from "axios";
+const WorksClass = Parse.Object.extend("works");
+const WorksApi = Http.create("works");
 const { NUXT_ENV_SITE_DOMAIN } = process.env;
 function transformToTree(arr) {
   var nodes = {};
-  return arr.filter(function (obj) {
+  return arr.filter(function(obj) {
     var id = obj["objectId"],
       parentId = obj["parentId"];
 
     nodes[id] = _.defaults(obj, nodes[id], { children: [] });
     parentId &&
-      (nodes[parentId] = nodes[parentId] || { children: [] })["children"].push(obj);
+      (nodes[parentId] = nodes[parentId] || { children: [] })["children"].push(
+        obj
+      );
 
     return !parentId;
   });
@@ -67,8 +70,8 @@ function transformToTree(arr) {
 export default {
   computed: {
     ...mapGetters({
-      user: "user/user",
-    }),
+      user: "user/user"
+    })
   },
   watch: {
     visible() {
@@ -90,27 +93,27 @@ export default {
       if (this.selection.length > 1 && !this.multiple) {
         this.selection = [this.selection[this.selection.length - 1]];
       }
-    },
+    }
   },
   props: {
     value: {
-      type: Array,
+      type: Array
     },
     selectId: {
-      type: Array,
+      type: Array
     },
     visible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     multiple: {
       type: Boolean,
-      default: true,
+      default: true
     },
     title: {
       type: String,
-      default: "选择文件夹",
-    },
+      default: "选择文件夹"
+    }
   },
   data() {
     return {
@@ -121,7 +124,7 @@ export default {
       selection: [],
       keyword: null,
       list: [],
-      treeData: [],
+      treeData: []
     };
   },
   methods: {
@@ -134,9 +137,11 @@ export default {
       });
     },
     checkSingle(item) {
-      var exists = _.find(this.selection, (i) => i.objectId === item.objectId);
+      var exists = _.find(this.selection, i => i.objectId === item.objectId);
       if (exists) {
-        this.selection = _.pullAllBy(this.selection, [{ objectId: item.objectId }]);
+        this.selection = _.pullAllBy(this.selection, [
+          { objectId: item.objectId }
+        ]);
       } else {
         this.selection.push(item);
       }
@@ -166,12 +171,15 @@ export default {
     //   }
     // },
     async getData() {
-      // const http = axios.create();
-      // const resultData = await http.get("folders");
+      var list = await new Parse.Query(WorksClass)
+        .equalTo("isFolder", true)
+        .doesNotExist("isDelete")
+        .find();
 
-      // this.treeData = transformToTree(resultData);
-    },
-  },
+      this.treeData = transformToTree(_.map(list, item => item.toJSON()));
+    }
+  }
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

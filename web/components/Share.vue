@@ -257,11 +257,12 @@
   </v-dialog>
 </template>
 <script>
+import Parse from "parse";
 import NanoId from "nanoid";
 import _ from 'lodash'
 
-// const ShareClass = Parse.Object.extend("share");
-// const WorksClass = Parse.Object.extend("works");
+const ShareClass = Parse.Object.extend("share");
+const WorksClass = Parse.Object.extend("works");
 const { NUXT_ENV_SITE_DOMAIN } = process.env;
 const copyToClipboard = function(text) {
   if (window.clipboardData && window.clipboardData.setData) {
@@ -324,27 +325,27 @@ export default {
   },
   methods: {
     async open(id) {
-      // var shareQuery = new Parse.Query(ShareClass);
-      // this.worksId = id;
-      // this.isOpening = true;
-      // this.isLoading = true;
+      var shareQuery = new Parse.Query(ShareClass);
+      this.worksId = id;
+      this.isOpening = true;
+      this.isLoading = true;
 
-      // try {
-      //   var works = await new Parse.Query(WorksClass).get(id);
-      //   if (_.isEmpty(works)) {
-      //     this.$overlay.alert("该文件不存在");
-      //     this.isOpening = false;
-      //   } else {
-      //     this.isPrivate = works.get("isPrivate") === true;
-      //     this.object =
-      //       (await shareQuery.equalTo("source", id).first()) ||
-      //       Parse.Object.fromJSON({
-      //         className: "share",
-      //         isShare: false,
-      //         usePassword: false,
-      //         source: id
-      //       });
-      //   }
+      try {
+        var works = await new Parse.Query(WorksClass).get(id);
+        if (_.isEmpty(works)) {
+          this.$overlay.alert("该文件不存在");
+          this.isOpening = false;
+        } else {
+          this.isPrivate = works.get("isPrivate") === true;
+          this.object =
+            (await shareQuery.equalTo("source", id).first()) ||
+            Parse.Object.fromJSON({
+              className: "share",
+              isShare: false,
+              usePassword: false,
+              source: id
+            });
+        }
 
         // if (this.shareObject) {
         //   this.model = this.shareObject.toJSON();
@@ -361,13 +362,13 @@ export default {
         // this.usePassword = !_.isEmpty(this.model.password);
         // this.width = this.model.width || 500;
         // this.height = this.model.height || 500;
-      // } catch (error) {
-      //   this.$catch(error)
-      //   //this.$overlay.message.error(message);
-      //   this.isOpening = false;
-      // }
+      } catch (error) {
+        this.$catch(error)
+        //this.$overlay.message.error(message);
+        this.isOpening = false;
+      }
 
-      // this.isLoading = false;
+      this.isLoading = false;
     },
     randomPassword() {
       this.model.password = NanoId(6);

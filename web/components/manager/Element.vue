@@ -49,13 +49,15 @@
 </template>
 <script>
 import Parse from 'parse'
+import Http from '~/api/common.js'
 import _ from 'lodash'
 import { mapGetters } from 'vuex';
 
-// const ShapeClass = Parse.Object.extend('shape')
-// const CategoryClass = Parse.Object.extend('shapeCategory')
-// const ShapeApi = Http.create('shape')
-// const ShapeCategoryApi = Http.create('shapeCategory')
+const ShapeClass = Parse.Object.extend('shape')
+const ShapeQuery = new Parse.Query(ShapeClass)
+const CategoryClass = Parse.Object.extend('shapeCategory')
+const ShapeApi = Http.create('shape')
+const ShapeCategoryApi = Http.create('shapeCategory')
 const { NUXT_ENV_OSS_URL } = process.env
 
 export default {
@@ -105,11 +107,11 @@ export default {
       this.$overlay.message.success('Success !');
     },
     async handleSaveCategory () {
-      // await ShapeCategoryApi.save({
-      //   name: this.createCategoryName
-      // })
+      await ShapeCategoryApi.save({
+        name: this.createCategoryName
+      })
 
-      // this.shapeCategories = await new Parse.Query(CategoryClass).find()
+      this.shapeCategories = await new Parse.Query(CategoryClass).find()
       this.$overlay.message.success('Success！');
     },
   }

@@ -666,11 +666,12 @@
 </template>
 <script>
 import _ from "lodash";
+import go from "gojs";
 import { mapGetters } from "vuex";
 import systemFonts from "~/store/predefine/fonts";
 import systemColors from "~/store/predefine/colors";
 import ColorPicker from "./ColorPicker";
-// const arrowHeads = go.Shape.getArrowheadGeometries().toArray();
+const arrowHeads = go.Shape.getArrowheadGeometries().toArray();
 const colors = []
 
 export default {

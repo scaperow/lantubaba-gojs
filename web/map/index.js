@@ -4,7 +4,7 @@ import FlowChart from './maps/FlowChart'
 import SequenceMap from './maps/SequenceMap'
 import StructMap from './maps/StructMap'
 import TemplateMaker from './templates/index'
-import ToolMaker from './tools/'
+import ToolMaker from './tools'
 import { Actions, Action } from './Action'
 
 import './extentions/Button'

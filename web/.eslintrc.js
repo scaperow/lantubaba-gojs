@@ -1,15 +1,26 @@
-const tsParser = require("@typescript-eslint/parser");
-const espree = require("espree");
 module.exports = {
-  parser: "vue-eslint-parser",
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: "module",
-    parser: {
-      js: espree,
-      ts: tsParser
+    "env": {
+        "es6": true,
+        "node": true
     },
-  },
-  plugins: ["@typescript-eslint"],
-  rules: {},
+    //"parser":  'vue-eslint-parser',
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/essential"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        parser: "babel-eslint",
+        "ecmaVersion": 6,
+        // specifying a module sourcetype prevent eslint from marking import statements as errors
+        sourceType: "module"
+    },
+    "plugins": [
+        "vue"
+    ],
+    "rules": {
+    }
 };

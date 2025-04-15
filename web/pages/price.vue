@@ -183,6 +183,7 @@ import UserAvatar from "../components/UserAvatar";
 import Foot from "../components/Foot";
 import Hair from "../components/Hair";
 import { mapGetters } from "vuex";
+import Parse from "parse";
 import planes from "../store/predefine/planes";
 import { debug } from "util";
 const FeatureClass = Parse.Object.extend("feature");

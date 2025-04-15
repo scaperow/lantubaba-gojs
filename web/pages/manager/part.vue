@@ -75,13 +75,16 @@
   </div>
 </template>
 <script>
-// import Parse from "parse";
+import Parse from "parse";
+import Http from "~/api/common.js";
 import _ from "lodash";
 import { mapGetters } from "vuex";
 const OrganizationClass = new Parse.Object.extend("organization");
 const ShapeClass = new Parse.Object.extend("shape");
 const ShapeQuery = new Parse.Query(ShapeClass);
 const CategoryClass = Parse.Object.extend("shapeCategory");
+const ShapeApi = Http.create("shape");
+const ShapeCategoryApi = Http.create("shapeCategory");
 const { NUXT_ENV_OSS_URL } = process.env;
 
 export default {
@@ -146,7 +149,7 @@ export default {
         return this.$overlay.message.error("Invalid json data");
       }
 
-      // await ShapeApi.save(this.shapeModel);
+      await ShapeApi.save(this.shapeModel);
 
       this.$overlay.message.success("Success !");
     },

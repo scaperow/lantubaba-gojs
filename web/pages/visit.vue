@@ -238,6 +238,7 @@ import { mapGetters } from "vuex";
 import More from "../components/More";
 import _ from "lodash";
 import Hair from "../components/Hair";
+import Parse from "parse";
 const LikeClass = Parse.Object.extend("like");
 const CommentClass = Parse.Object.extend("comment");
 const FavoriteClass = Parse.Object.extend("favorite");

@@ -89,14 +89,16 @@
 </template>
 
 <script>
-// import Go from "gojs";
+import Go from "gojs";
 import { mapGetters } from "vuex";
 import { TemplateMaker } from "~/map";
 import ShapeBar from "./ShapeBar";
 import FileSaver from "file-saver";
 import Vue from "vue";
+import Parse from "parse";
 import _ from "lodash";
 
+let WorksClass = Parse.Object.extend("works");
 
 export default {
   computed: {

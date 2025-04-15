@@ -22,7 +22,7 @@ const actions = {
       functionName = 'shapesForCategory'
     }
 
-    // return Parse.Cloud.run(functionName, filter)
+    return Parse.Cloud.run(functionName, filter)
   },
 
   async getList({ commit, state }, filter) {

@@ -48,6 +48,8 @@
 </template>
 <script>
 import _ from "lodash";
+import Http from "~/api/common";
+import Parse from "parse";
 import { TemplateMaker } from "~/map";
 import { mapGetters, mapActions } from "vuex";
 

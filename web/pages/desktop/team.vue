@@ -7,6 +7,7 @@
 <script>
 
 import Parse from 'parse'
+import Http from '~/api/common'
 import { mapGetters } from 'vuex'
 import NanoId from 'nanoid'
 import ShareModal from '~/components/Share'

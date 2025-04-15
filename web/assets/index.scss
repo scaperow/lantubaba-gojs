@@ -17,16 +17,6 @@ html {
   display: none;
 }
 
-@font-face {
-  font-family: "iconfont"; /* Project id 3846933 */
-  src: url("//at.alicdn.com/t/c/font_3846933_mebgezd2bli.woff2?t=1672542399991")
-      format("woff2"),
-    url("//at.alicdn.com/t/c/font_3846933_mebgezd2bli.woff?t=1672542399991")
-      format("woff"),
-    url("//at.alicdn.com/t/c/font_3846933_mebgezd2bli.ttf?t=1672542399991")
-      format("truetype");
-}
-
 .logo {
   background: url(/logo.png);
   background-repeat: no-repeat;
@@ -62,7 +52,7 @@ html {
 }
 
 .content-tip {
-  // color: $--color-info;
+  color: $--color-info;
   margin: 36px 42px;
   text-align: center;
 
@@ -82,7 +72,7 @@ html {
 }
 
 .tip {
-  // color: $--color-info;
+  color: $--color-info;
   padding: 8px 16px;
   border-radius: 6px;
   background: #f3f2e962;
@@ -131,10 +121,10 @@ html {
 }
 
 .slide-fade-enter-active {
-  transition: all 0.3s ease;
+  transition: all .3s ease;
 }
 .slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active below version 2.1.8 */ {
@@ -142,12 +132,12 @@ html {
   opacity: 0.4;
 }
 
-.shadowed {
-  box-shadow: 3px 3px 12px -3px #9996 !important;
+.shadowed{
+ box-shadow:3px 3px 12px -3px  #9996 !important;
 }
 
-.fr {
-  float: right !important;
+.fr{
+  float:right !important;
 }
 
 @keyframes acrossIn {
@@ -167,23 +157,14 @@ html {
   }
 }
 
-.icon-backdrop {
-  // background: #f3f3f3;
-  border-radius: 56px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+.v-icon.colorful::before{
+  background: -webkit-linear-gradient(#9c47fc, #1976d2)  !important;
+  -webkit-background-clip: text  !important;
+  -webkit-text-fill-color: transparent  !important;
+} 
 
-  .v-icon.backdrop::before {
-    font-size: 80px;
-    // background: -webkit-linear-gradient(#90A4AE, #78909C) !important;
-    color: #cfd8dc;
-    padding: 16px;
-    padding-bottom: 0;
-    padding-top: 0;
-  }
-}
+
+
 
 .goTXarea {
   //width: auto !important;
@@ -207,16 +188,4 @@ html {
 
 .theme--dark.v-application {
   background: #333;
-}
-
-.v-menu__content {
-  box-shadow: none !important;
-
-  border: thin solid rgba(0, 0, 0, 0.12);
-
-}
-
-.v-sheet.v-list {
-  padding: 0 !important;
-
 }

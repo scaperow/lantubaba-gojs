@@ -4,7 +4,7 @@
     <div class="d-flex flex-column align-center justify-center flex-grow-1">
       <h1>蓝图巴巴</h1>
       <p>流程图、思维导图、UML 图 等等，统统搞定</p>
-      <v-btn rounded color="amber" depressed x-large @click="start">开始创作</v-btn>
+      <v-btn rounded color="white" depressed x-large @click="start">开始创作</v-btn>
     </div>
     <foot></foot>
   </section>

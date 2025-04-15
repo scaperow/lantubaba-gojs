@@ -46,7 +46,7 @@
                   :rules="[$validate('isCommonName'),$validate('isEmpty|isLength:长度应小于24, 大于 3',{min:3,max:24})]"
                   v-model="user.nick"
                 ></v-text-field>
-                <!--
+                <!-- 
                 <v-text-field v-model="mineModel.nick"
                 :rules="userNameValidators"></v-text-field>-->
 
@@ -162,6 +162,7 @@
 <script>
 import { mapGetters } from "vuex";
 import PictureSelector from "~/components/Picture.vue";
+import Parse from "parse";
 import Validators from "~/utils/validators";
 
 export default {

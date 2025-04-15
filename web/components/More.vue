@@ -1,15 +1,13 @@
 <template>
   <div ref="scroll">
-    <slot name="loading" v-if="loading">
+    <slot name="loading" v-if="isLoading">
       <v-icon :dark="dark" size="48" :color="loadingColor">mdi-loading mdi-spin</v-icon>
     </slot>
     <template v-else>
       <template v-if="hasMore === false">
-        <slot name="finish" v-if="index > 0 || count > 0">
-          <v-divider></v-divider>
-          <h6 class="blue-grey--text text--lighten-2">没有更多了</h6>
-        </slot>
-        <slot name="empty" class="blue-grey--text text--lighten-2"  v-else>没有内容</slot>
+        {{triggerTimes}}
+        <slot name="empty" v-if="triggerTimes === 0">没有内容</slot>
+        <slot name="finish" v-else>没有更多了</slot>
       </template>
       <slot name="trigger" v-else>
         <v-btn :dark="dark" outlined rounded @click="start">加载更多</v-btn>
@@ -30,17 +28,15 @@ function isScrolledIntoView(el) {
   }
 }
 export default {
+  data() {
+    return {
+      isLoading: false,
+      hasMore: false,
+      triggerTimes: 0
+    };
+  },
   props: {
-    index: {
-      default: -1
-    },
-    count: {
-      default: 0
-    },
-    loading: {
-      default: false
-    },
-    hasMore: {
+    immediate: {
       default: true
     },
     target: {
@@ -64,8 +60,68 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.immediate === true) {
+      this.isLoading = true;
+
+      var waiting = new Promise((resolve, reject) => {
+        this.$emit("start", {
+          resolve,
+          reject
+        });
+      });
+
+      waiting.then(
+        () => {
+          this.triggerTimes += 1;
+          this.hasMore = true;
+        },
+        () => {
+          this.hasMore = false;
+        }
+      );
+
+      waiting.finally(() => {
+        this.isLoading = false;
+        this.target.addEventListener("scroll", this.check, false);
+      });
+
+      return waiting;
+    }
+  },
   methods: {
-    check: _.debounce(function () {
+    async start() {
+      // if (!this.target || !this.hasMore || this.isLoading) {
+      //   return;
+      // }
+      if (!this.isLoading) {
+        var waiting = new Promise((resolve, reject) => {
+          this.target.removeEventListener("scroll", this.check);
+          this.isLoading = true;
+          this.$emit("start", {
+            resolve,
+            reject
+          });
+        });
+
+        waiting.then(
+          () => {
+            this.triggerTimes += 1;
+          },
+          () => {
+            this.hasMore = false;
+          }
+        );
+
+        waiting.finally(() => {
+          this.isLoading = false;
+          this.target.addEventListener("scroll", this.check, false);
+        });
+
+        return waiting;
+      }
+    },
+    check: _.debounce(function() {
       if (this.hasMore && isScrolledIntoView(this.$refs.scroll)) {
         this.start();
       }

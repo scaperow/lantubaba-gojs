@@ -1,8 +1,9 @@
 
+import Parse from "parse";
 import _ from 'lodash'
-// import Http from '~/api/common'
+import Http from '~/api/common'
 import planes from "../predefine/planes";
-// const FeatureClass = Parse.Object.extend("feature")
+const FeatureClass = Parse.Object.extend("feature")
 
 const state = () => ({
     featureList: null,
@@ -18,12 +19,12 @@ const getters = {
 
 const actions = {
     async getFeatures({ commit, state }) {
-        // if (!state.featureList) {
-        //     var list = await new Parse.Query(FeatureClass).find()
-        //     commit('SET_FEATURES', list)
+        if (!state.featureList) {
+            var list = await new Parse.Query(FeatureClass).find()
+            commit('SET_FEATURES', list)
 
-        //     return list
-        // }
+            return list
+        }
     },
     async getSummary({ commit, state }) {
         if (!state.useSummary) {

@@ -99,9 +99,9 @@
 </template>
 <script>
 import OSS from 'ali-oss'
-// import Go, { Shape } from 'gojs'
+import Go, { Shape } from 'gojs'
 import { clipperBasic, clipperPreview, clipperUpload } from 'vuejs-clipper'
-
+import Http from '~/api/common.js'
 import _ from 'lodash'
 import Vue from 'vue'
 import Parse from 'parse'
@@ -109,6 +109,8 @@ import NanoId from 'nanoid'
 
 const { NUXT_ENV_UPLOAD_IMAGE_MAX_SIZE: maxSizeLimit = 1 } = process.env
 
+let PictureModel = Parse.Object.extend('picture')
+let pictureApi = Http.create('picture')
 let hasSubscribe = false
 let defaultNameCount = -1
 
@@ -160,19 +162,19 @@ export default {
 
       this.isSaving = true
 
-      // let { AccessKeyId,
-      //   AccessKeySecret,
-      //   Expiration,
-      //   SecurityToken } = await Parse.Cloud.run('assumeRole')
+      let { AccessKeyId,
+        AccessKeySecret,
+        Expiration,
+        SecurityToken } = await Parse.Cloud.run('assumeRole')
 
-      // let id = NanoId(10)
-      // let client = new OSS({
-      //   region: 'oss-cn-beijing',
-      //   accessKeyId: AccessKeyId,
-      //   accessKeySecret: AccessKeySecret,
-      //   stsToken: SecurityToken,
-      //   bucket: 'lantubaba-dev'
-      // });
+      let id = NanoId(10)
+      let client = new OSS({
+        region: 'oss-cn-beijing',
+        accessKeyId: AccessKeyId,
+        accessKeySecret: AccessKeySecret,
+        stsToken: SecurityToken,
+        bucket: 'lantubaba-dev'
+      });
 
 
 
@@ -183,11 +185,11 @@ export default {
 
         if (blob) {
           try {
-          //   this.pictureModel.ossId = id
-          //   this.pictureModel.user = { id: 'testUser' }
+            this.pictureModel.ossId = id
+            this.pictureModel.user = { id: 'testUser' }
 
-          //   await client.put(`picture/testUser/${id}.png`, blob)
-          //   await pictureApi.save(this.pictureModel)
+            await client.put(`picture/testUser/${id}.png`, blob)
+            await pictureApi.save(this.pictureModel)
 
             this.$overlay.message.success('操作成功')
             this.isSaving = false

@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Parse from "parse";
 import { mapActions, mapGetters } from "vuex";
 
 export default {

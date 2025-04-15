@@ -22,6 +22,7 @@
   </div>
 </template>
 <script>
+import Parse from "parse";
 const OrganizationClass = new Parse.Object.extend("organization");
 
 export default {

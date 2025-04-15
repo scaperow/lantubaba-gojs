@@ -1,82 +1,182 @@
 <template>
-  <v-app>
-    <v-navigation-drawer class="blue-grey lighten-5" v-model="drawer" app>
-      <v-sheet class="pa-4 blue-grey lighten-5">
+  <section class="d-flex flex-column flex-grow-1">
+    <div class="d-flex flex-row flex-grow-1" style="height:0">
+      <div
+        style="width:300px;max-width:300px;min-width:300px; box-shadow: 3px 0 12px 3px #9993;"
+        class="grey lighten-4 d-flex flex-column align-center flex-grow-1 pa-0"
+      >
         <div class="logo dark ma-4" @click="$router.push('/')">
           <label>蓝图巴巴</label>
         </div>
-        <div class="pa-2 text-center">
-          <v-btn
-            rounded
-            outlined
-            depressed
-            color="primary"
-            x-large
-            @click="create()"
+        <!-- <v-divider /> -->
+        <div class="ma-4">
+          <limiter
+            v-if="summary"
+            :rules="[{code:'PUBLIC_FILE',value:summary.publicFile},{code:'PRIVATE_FILE',value:summary.privateFile}]"
           >
-            <v-icon>mdi mdi-plus</v-icon>
-            新建</v-btn
-          >
+            <template v-slot:activator="{on:limiter,intercepted}">
+              <v-menu bottom offset-y>
+                <template v-slot:activator="{on}">
+                  <v-btn
+                    v-on="on"
+                    @click="!intercepted && create()"
+                    large
+                    depressed
+                    block
+                    rounded
+                    color="primary"
+                    class="colorful"
+                  >
+                    <v-icon class="mr-2">mdi-plus</v-icon>创建蓝图
+                  </v-btn>
+                </template>
+
+                <!-- <v-list>
+                  <v-list-item
+                    v-for="map in maps"
+                    :key="map.objectId"
+                    v-on="limiter"
+                    @click="!intercepted && createFile(map)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon>{{map.icon}}</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-content>{{map.label}}</v-list-item-content>
+                  </v-list-item>
+                </v-list>-->
+              </v-menu>
+            </template>
+          </limiter>
         </div>
-      </v-sheet>
-
-      <v-list>
-        <v-list-item-group color="blue darken-4">
-          <v-list-item nuxt to="/desktop/mine">
-            <v-list-item-icon>
-              <v-icon color="gray" class="mr-2">mdi-file</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>我的文件</v-list-item-content>
-          </v-list-item>
-          <v-list-item nuxt to="/desktop/favorite">
-            <v-list-item-icon>
-              <v-icon color="gray" class="mr-2">mdi-star</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>我的收藏</v-list-item-content>
-          </v-list-item>
-          <v-list-item nuxt to="/desktop/recycle">
-            <v-list-item-icon>
-              <v-icon color="gray" class="mr-2">mdi-trash-can</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>回收站</v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main>
-      <v-container fluid class="pa-4 d-flex flex-column" style="height: 100vh">
-        <div class="d-flex flex-row justify-space-between">
+        <div style="overflow-y:auto">
+          <v-list color="grey lighten-4" width="300">
+            <v-subheader>
+              <div class="flex-grow-1 d-flex flex-row align-center">
+                <label>文件夹</label>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{on}">
+                    <v-btn color="secondary" text icon v-on="on" @click="createFolder">
+                      <v-icon>mdi-plus-circle</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>创建文件夹</span>
+                </v-tooltip>
+              </div>
+            </v-subheader>
+            <v-list-item-group color="primary">
+              <v-list-item
+                nuxt
+                :to="`/desktop/${folder.objectId}`"
+                v-for="(folder,index) in folderList"
+                :key="index"
+              >
+                <v-list-item-icon>
+                  <v-icon color="amber" class="mr-2">mdi-folder</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>{{folder.name}}</v-list-item-content>
+                <v-list-item-action>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{on:{click}}">
+                      <v-btn @click.prevent="click" icon max-width="32" max-height="32">
+                        <v-icon color="grey">mdi-menu</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="rename(folder)">
+                        <v-list-item-icon>
+                          <v-icon class="colorful">mdi-folder-edit-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>重命名</v-list-item-content>
+                      </v-list-item>
+                      <v-list-item @click="remove(folder)">
+                        <v-list-item-icon>
+                          <v-icon  class="colorful"> mdi-folder-remove-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>删除</v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-list-item-action>
+              </v-list-item>
+               <v-list-item nuxt to="/desktop/favorite">
+                <v-list-item-icon>
+                  <v-icon color="red" class="mr-2">mdi-star</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>我的收藏</v-list-item-content>
+              </v-list-item>
+              <v-list-item nuxt to="/desktop/recycle">
+                <v-list-item-icon>
+                  <v-icon color="indigo" class="mr-2">mdi-trash-can</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>回收站</v-list-item-content>
+              </v-list-item>
+              <!-- <v-list-item nuxt to="/welcome/mine">
+                  <v-icon class="mr-2">mdi-file-document</v-icon>全部作品
+                </v-list-item>
+                <v-list-item nuxt to="/welcome/share">
+                  <v-icon class="mr-2">mdi-share</v-icon>公开的作品
+                </v-list-item>
+                <v-list-item nuxt to="/welcome/private">
+                  <v-icon class="mr-2">mdi-shield-account</v-icon>私有的作品
+                </v-list-item>
+                <v-list-item nuxt to="/welcome/team">
+                  <v-icon color class="mr-2">mdi-star</v-icon>收藏的作品
+                </v-list-item>
+                <v-divider></v-divider>
+                <v-list-item nuxt to="/welcome/recycle">
+                  <v-icon color class="mr-2">mdi-trash-can</v-icon>回收站
+              </v-list-item>-->
+            </v-list-item-group>
+          </v-list>
+        </div>
+      </div>
+      <div class="list d-flex flex-column flex-grow-1 justify-stretch pa-4" style="overflow-y:auto">
+        <div class="d-flex flex-row justify-space-between mx-4 mb-4">
           <v-text-field
             class="flex-grow-1"
-            style="max-width: 480px"
+            style="max-width:480px;"
             label="搜索标题/文件夹名称"
-            rounded
             filled
             clearable
             hide-details
             @click:append-outer="search"
             @keydown.enter="search"
             @click:clear="cancelSearch"
+            rounded
             v-model="keyword"
           >
-            <slot name="label">
+            <template slot="label">
               输入名称搜索文件/文件夹
               <v-icon>mdi-file-find</v-icon>
-            </slot>
+            </template>
           </v-text-field>
-          <user-avatar style="width: 45px; height: 45px"></user-avatar>
+          <user-avatar style="width:45px;height:45px"></user-avatar>
         </div>
+
+        <v-alert color="grey lighten-4" class="mx-4 my-0" v-if="user && !user.emailVerified ">
+          <div class="d-flex flex-row justify-space-between align-center">
+            <div>
+              <v-icon class="mx-2 colorful">mdi-alert-circle</v-icon>您的邮箱还没有验证成功，为了您账户的安全，请到收件箱中查收邮件并进行相关操作
+            </div>
+            <div>
+              <v-btn class="ml-6" rounded color="white" depressed @click="resend">重发验证邮件</v-btn>
+            </div>
+          </div>
+        </v-alert>
         <nuxt-child class="flex-grow-1"></nuxt-child>
-      </v-container>
-    </v-main>
-    <create-modal ref="createModal"></create-modal>
-  </v-app>
+        <v-divider />
+        <!-- <foot :dark="false"/> -->
+      </div>
+      <create-modal ref="createModal" :parent="folderId" v-if="folderId"></create-modal>
+    </div>
+  </section>
 </template>
 <script>
+import Parse from "parse";
 import UserAvatar from "~/components/UserAvatar";
-import CreateModal from "~/components/FileCreator";
+import CreateModal from "~/components/file-creator";
 import { mapGetters } from "vuex";
+import Limiter from "../components/Limiter";
 import _ from "lodash";
 
 export default {
@@ -84,10 +184,11 @@ export default {
   components: {
     UserAvatar,
     CreateModal,
+    Limiter
   },
   head() {
     return {
-      title: "我的蓝图",
+      title: "我的蓝图"
     };
   },
   computed: {
@@ -98,17 +199,17 @@ export default {
       searchList: "works/searchList",
       folderList: "works/folders",
       user: "user/user",
-      summary: "system/summary",
-      currentFolder: "works/currentFolder",
-    }),
+      folderId: "works/folderId",
+      summary: "system/summary"
+    })
   },
   activated() {},
   created() {
-    // this.$store.dispatch("works/getFolders");
+    this.$store.dispatch("works/getFolders");
   },
   data() {
     return {
-      keyword: null,
+      keyword: null
     };
   },
   methods: {
@@ -149,7 +250,7 @@ export default {
         name: `新建${label}`,
         style,
         raw,
-        parentId: this.currentFolder.id || 0,
+        parentId: this.folderId
       };
 
       try {
@@ -181,8 +282,8 @@ export default {
           rules: [
             this.$validate("isNotEmpty"),
             this.$validate("isCommonName"),
-            this.$validate("isLength", { min: 3, max: 28 }),
-          ],
+            this.$validate("isLength", { min: 3, max: 28 })
+          ]
         });
 
         // folderName = await this.$overly.prompt();
@@ -196,7 +297,7 @@ export default {
         let model = {
           name: folderName,
           isFolder: true,
-          parentId: this.currentFolder.id || 0,
+          parentId: this.folderId
         };
 
         try {
@@ -213,7 +314,7 @@ export default {
 
       isDelete = await this.$overlay.confirm({
         text: "该操作会将文件夹内的所有内容一并删除, 是否继续?",
-        title: "警告",
+        title: "警告"
       });
 
       if (isDelete) {
@@ -238,8 +339,8 @@ export default {
           rules: [
             this.$validate("isNotEmpty"),
             this.$validate("isCommonName"),
-            this.$validate("isLength", { min: 3, max: 28 }),
-          ],
+            this.$validate("isLength", { min: 3, max: 28 })
+          ]
         });
       } catch (error) {
         //this.$catch(error);
@@ -251,7 +352,7 @@ export default {
         try {
           this.$store.dispatch("works/update", {
             id: objectId,
-            name: newly,
+            name: newly
           });
         } catch (error) {
           //this.$catch(error);
@@ -259,21 +360,8 @@ export default {
           this.loading = false;
         }
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style lang="scss" scoped>
-.v-list .v-list-item .v-icon {
-  border-radius: 8px;
-  background: white;
-  padding: 4px;
-}
-
-.v-list .v-list-item--active .v-icon {
-  border-radius: 16px;
-  background: white;
-  padding: 12px;
-}
-</style>

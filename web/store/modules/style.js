@@ -2,7 +2,7 @@ import Go from 'gojs'
 import Parse from 'parse'
 import _ from 'lodash'
 
-// const StyleClass = Parse.Object.extend('style')
+const StyleClass = Parse.Object.extend('style')
 
 const state = () => ({
   predefine: null,
@@ -24,9 +24,9 @@ const actions = {
     var list = []
 
     if (_.isEmpty(state.list)) {
-      // list = await new Parse.Query(StyleClass).find()
+      list = await new Parse.Query(StyleClass).find()
 
-      // commit('SET_LIST', list)
+      commit('SET_LIST', list)
     }
 
     dispatch('getPredefine')

@@ -1,18 +1,11 @@
 <template>
-  <div
-    class="
-      white
-      d-flex
-      flex-column flex-grow-1
-      justify-space-between
-      align-center
-    "
-  >
+  <div class="white d-flex flex-column flex-grow-1 justify-space-between align-center">
     <hair :dark="false" />
 
-    <v-card class="error" outlined dark flat width="100%" max-width="650px">
-      <!-- <v-icon :size="128" color="error" class="title-badge white animated flash">mdi-alert-circle</v-icon> -->
-      <!-- <v-img class="title-badge primary" >
+    <v-card class="error lighten-4" dark flat width="100%" max-width="650px">
+      <v-card-title>
+        <v-icon :size="128" color="error" class="title-badge white animated flash">mdi-alert-circle</v-icon>
+        <!-- <v-img class="title-badge primary" >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="90"
@@ -25,16 +18,11 @@
             />
           </svg>
         </v-img>-->
+      </v-card-title>
+      <v-divider />
       <v-card-text class="d-flex flex-column pl-6 pr-6" v-if="error">
         <div
-          class="
-            flex-grow-1
-            d-flex
-            flex-column
-            justify-center
-            align-center
-            error-404
-          "
+          class="flex-grow-1 d-flex flex-column justify-center align-center error-404"
           v-if="error.statusCode === 404"
         >
           <h2 class="white--text">404</h2>
@@ -42,13 +30,15 @@
           <h4 class="white--text">抱歉,找不到该页面</h4>
         </div>
         <div v-else>发生未知错误</div>
+
         <div v-if="isDevelopment" class="pt-6 pb-6">
           <i>(仅开发模式可见):</i>
           {{ error }}
         </div>
       </v-card-text>
+      <v-divider />
       <v-card-actions class="d-flex flex-column jusitfy-center">
-        <v-btn @click="$router.go(-1)" outlined>返回</v-btn>
+        <v-btn @click="$router.go(-1)" outlined rounded>返回</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -65,11 +55,8 @@ export default {
   props: {
     error: {
       type: Object,
-      default: null,
-    },
-  },
-  mounted() {
-    console.error(this.error);
+      default: null
+    }
   },
   computed: {
     isDevelopment() {
@@ -77,11 +64,11 @@ export default {
     },
     message() {
       return this.error.message || "发生错误了";
-    },
+    }
   },
   components: {
     Hair,
-    Foot,
+    Foot
   },
   head() {
     return {
@@ -90,11 +77,11 @@ export default {
         {
           name: "viewport",
           content:
-            "width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no",
-        },
-      ],
+            "width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"
+        }
+      ]
     };
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
